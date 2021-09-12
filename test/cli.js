@@ -1,12 +1,12 @@
 import process from 'node:process';
 import fs from 'node:fs';
 import path from 'node:path';
+import {fileURLToPath} from 'node:url';
 import test from 'ava';
 import execa from 'execa';
 import slash from 'slash';
-import createEsmUtils from 'esm-utils';
 
-const {__dirname} = createEsmUtils(import.meta);
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 process.chdir(__dirname);
 
 const main = (arguments_, options) => execa(path.join(__dirname, '../cli.js'), arguments_, options);

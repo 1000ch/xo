@@ -1,11 +1,11 @@
 import process from 'node:process';
 import {promises as fs} from 'node:fs';
 import path from 'node:path';
+import {fileURLToPath} from 'node:url';
 import test from 'ava';
-import createEsmUtils from 'esm-utils';
 import xo from '../index.js';
 
-const {__dirname} = createEsmUtils(import.meta);
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 process.chdir(__dirname);
 
 const hasRule = (results, expectedRuleId) => results[0].messages.some(({ruleId}) => ruleId === expectedRuleId);

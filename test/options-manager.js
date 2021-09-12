@@ -1,19 +1,18 @@
 import {promises as fs} from 'node:fs';
 import process from 'node:process';
 import path from 'node:path';
+import {fileURLToPath} from 'node:url';
 import test from 'ava';
 import {omit} from 'lodash-es';
 import slash from 'slash';
-import createEsmUtils from 'esm-utils';
 import {DEFAULT_EXTENSION, DEFAULT_IGNORES} from '../lib/constants.js';
 import * as manager from '../lib/options-manager.js';
+import parentConfig from './fixtures/nested/package.json';
+import childConfig from './fixtures/nested/child/package.json';
+import prettierConfig from './fixtures/prettier/package.json';
+import enginesConfig from './fixtures/engines/package.json';
 
-const {__dirname, require, json} = createEsmUtils(import.meta);
-const parentConfig = json.loadSync('./fixtures/nested/package.json');
-const childConfig = json.loadSync('./fixtures/nested/child/package.json');
-const prettierConfig = json.loadSync('./fixtures/prettier/package.json');
-const enginesConfig = json.loadSync('./fixtures/engines/package.json');
-
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 process.chdir(__dirname);
 
 test('normalizeOptions: makes all the options plural and arrays', t => {
@@ -426,11 +425,11 @@ test('buildConfig: extends', t => {
 	]);
 });
 
-test('buildConfig: typescript', t => {
+test('buildConfig: typescript', async t => {
 	const config = manager.buildConfig({ts: true, tsConfigPath: './tsconfig.json'});
 
 	t.is(config.baseConfig.extends[config.baseConfig.extends.length - 1], 'xo-typescript');
-	t.is(config.baseConfig.parser, require.resolve('@typescript-eslint/parser'));
+	t.is(config.baseConfig.parser, await import.meta.resolve('@typescript-eslint/parser'));
 	t.deepEqual(config.baseConfig.parserOptions, {
 		warnOnUnsupportedTypeScriptVersion: false,
 		ecmaFeatures: {jsx: true},
@@ -439,14 +438,14 @@ test('buildConfig: typescript', t => {
 	});
 });
 
-test('buildConfig: typescript with parserOption', t => {
+test('buildConfig: typescript with parserOption', async t => {
 	const config = manager.buildConfig({
 		ts: true,
 		parserOptions: {projectFolderIgnoreList: [], sourceType: 'script'},
 		tsConfigPath: 'path/to/tmp-tsconfig.json',
 	}, {});
 
-	t.is(config.baseConfig.parser, require.resolve('@typescript-eslint/parser'));
+	t.is(config.baseConfig.parser, await import.meta.resolve('@typescript-eslint/parser'));
 	t.deepEqual(config.baseConfig.parserOptions, {
 		warnOnUnsupportedTypeScriptVersion: false,
 		ecmaFeatures: {jsx: true},

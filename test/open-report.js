@@ -1,12 +1,12 @@
 /* eslint-disable ava/no-skip-test */
 import process from 'node:process';
 import path from 'node:path';
+import {fileURLToPath} from 'node:url';
 import test from 'ava';
 import proxyquire from 'proxyquire';
-import createEsmUtils from 'esm-utils';
 import xo from '../index.js';
 
-const {__dirname} = createEsmUtils(import.meta);
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 process.chdir(__dirname);
 
 test.skip('opens nothing when there are no errors nor warnings', async t => {

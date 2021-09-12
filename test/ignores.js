@@ -1,10 +1,10 @@
 import path from 'node:path';
+import {fileURLToPath} from 'node:url';
 import test from 'ava';
-import createEsmUtils from 'esm-utils';
 import {globby} from 'globby';
 import xo from '../index.js';
 
-const {__dirname} = createEsmUtils(import.meta);
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 test('Should pickup "ignores" config', async t => {
 	const cwd = path.join(__dirname, 'fixtures/nested-ignores');
